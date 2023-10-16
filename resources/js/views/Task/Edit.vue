@@ -73,6 +73,7 @@ export default {
     data() {
         return {
             formData: {
+                id: null,
                 task: '',
                 project: '',
                 programmer: '',
@@ -85,36 +86,37 @@ export default {
         }
     },
     mounted() {
-        this.setDefaultDeadline();
+        this.fetchDataEdit();
     },
     methods: {
-        submitAction() {
-            axios.post('/api/task', this.formData)
-                .then(response => {
-                    if (response.status === 200) {
-                        this.$router.push('/');
-                    }
+        fetchDataEdit() {
+            this.formData.id = this.$route.params.id;
+            axios.get("/api/task/edit/" + this.formData.id)
+                .then(res => {
+                    this.formData.task = res.data.task
+                    this.formData.project = res.data.project
+                    this.formData.programmer = res.data.programmer
+                    this.formData.deadline = res.data.deadline
+                    this.formData.status = res.data.status
                 })
-                .catch(error => {
-                    if (error.response.status === 422) {
-                        this.errors = error.response.data.errors;
-                        this.toast.error(error.response.data.message);
-                    }
-                });
+                .catch(err => {
+                    console.error(err);
+                })
         },
-        setDefaultDeadline() {
-            const today = new Date();
-            const threeDaysLater = new Date(today.getTime() + (3 * 24 * 60 * 60 * 1000));
-            const day = threeDaysLater.getDay();
-            if (day === 0) {
-                threeDaysLater.setDate(threeDaysLater.getDate() + 1);
-            } else if (day === 6) {
-                threeDaysLater.setDate(threeDaysLater.getDate() + 2);
-            }
-            const formattedDate = threeDaysLater.toISOString().slice(0, 10);
-            this.formData.deadline = formattedDate;
-            this.$refs.deadlineInput.value = formattedDate;
+        submitAction() {
+            axios.put('/api/task/update/' + this.formData.id, this.formData)
+                .then(res => {
+                    this.toast.success(res.data.message)
+                    this.$router.push('/');
+                })
+                .catch(err => {
+                    this.errors = err.response.data.errors;
+                    this.toast.error(err.response.data.message)
+                })
         }
+
+
+
     }
 }
 </script>

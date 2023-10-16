@@ -47,7 +47,9 @@ class TaskController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = Task::findOrFail($id);
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -55,7 +57,28 @@ class TaskController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'task' => 'required',
+            'programmer' => 'required',
+            'deadline' => 'required',
+            'project' => 'required',
+            'status' => 'required',
+        ]);
+
+        $update = Task::where('id', $id)
+            ->update([
+                'task' => $request->task,
+                'project' => $request->project,
+                'programmer' => $request->programmer,
+                'deadline' => $request->deadline,
+                'status' => $request->status,
+            ]);
+
+        if ($update) {
+            return response()->json(['message' => 'Data berhasil diubah'], 200);
+        } else {
+            return response()->json(['message' => 'Data gagal diubah'], 500);
+        }
     }
 
     /**
@@ -63,6 +86,13 @@ class TaskController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $task = Task::findOrFail($id);
+        $delete = $task->delete();
+
+        if ($delete) {
+            return response()->json(['message' => 'Task deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Task deleted failed'], 500);
+        }
     }
 }

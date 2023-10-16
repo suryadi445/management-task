@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from './views/Home.vue';
-import Task from './views/Task.vue';
+import AddTask from './views/Task/Add.vue';
+import EditTask from './views/Task/Edit.vue';
 
 const routes = [
-    { path: '/', component: Home },
-    { path: '/task', component: Task }
+    { path: '/', name: 'Home', component: Home },
+    { path: '/task', name: 'AddTask', component: AddTask },
+    { path: '/task/show/:id', name: 'EditTask', component: EditTask },
 ];
 
 const router = createRouter({
