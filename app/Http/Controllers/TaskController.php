@@ -10,11 +10,20 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = Task::latest()->get();
+        $currentPage = $request->query('page', 1);
+        $pageSize = $request->query('pageSize');
 
-        return response()->json($data, 200);
+        $totalData = Task::count();
+        $totalPages = ceil($totalData / $pageSize);
+
+        $data = Task::paginate($pageSize, ['*'], 'page', $currentPage);
+
+        return response()->json([
+            'tasks' => $data,
+            'totalPages' => $totalPages
+        ], 200);
     }
 
     /**
