@@ -45,18 +45,14 @@
                     </tr>
                 </tbody>
             </table>
-            <pagination :current-page="currentPage" :total-pages="totalPages" @page-changed="onPageChanged" />
+            <pagination-component :current-page="currentPage" :total-pages="totalPages" @page-changed="onPageChanged" />
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios';
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
-import Pagination from '../components/PaginationComponent.vue';
-
-
 
 export default {
     data() {
@@ -65,26 +61,28 @@ export default {
             toast: useToast(),
             currentPage: 1,
             totalPages: 1,
-            pageSize: 5,
+            pageSize: 10,
+            fullPage: false
         }
-    },
-    components: {
-        Pagination
     },
     mounted() {
         this.fetchData()
     },
     methods: {
         fetchData() {
+            let loader = this.$loading.show();
+
             axios.get(`api/task?page=${this.currentPage}&pageSize=${this.pageSize}`)
                 .then(res => {
-                    console.log(res);
                     this.items = res.data.tasks.data
                     this.totalPages = res.data.totalPages;
-
+                    loader.hide()
                 })
                 .catch(err => {
-                    console.error(err);
+                    setTimeout(() => {
+                        loader.hide()
+                        this.toast.error(err.response.data.message);
+                    }, 2000);
                 })
         },
         formatDateTime(dateTime) {
@@ -111,7 +109,6 @@ export default {
                         })
                         .catch(err => {
                             this.toast.error(err.response.data.message);
-                            console.error(err);
                         })
                 }
             });
