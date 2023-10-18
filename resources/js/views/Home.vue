@@ -6,6 +6,9 @@
             Add Task
         </router-link>
     </div>
+    <div class="flex items-center justify-end px-1 mb-4">
+        <search-component @search="onSearch" />
+    </div>
     <div class="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
         <div class="w-full overflow-x-auto">
             <table class="w-full text-center">
@@ -52,7 +55,6 @@
 
 <script>
 import { useToast } from "vue-toastification";
-import Swal from "sweetalert2";
 
 export default {
     data() {
@@ -61,8 +63,9 @@ export default {
             toast: useToast(),
             currentPage: 1,
             totalPages: 1,
-            pageSize: 10,
-            fullPage: false
+            pageSize: 5,
+            fullPage: false,
+            searchKeyword: "",
         }
     },
     mounted() {
@@ -72,7 +75,7 @@ export default {
         fetchData() {
             let loader = this.$loading.show();
 
-            axios.get(`api/task?page=${this.currentPage}&pageSize=${this.pageSize}`)
+            axios.get(`api/task?page=${this.currentPage}&pageSize=${this.pageSize}&search=${this.searchKeyword}`)
                 .then(res => {
                     this.items = res.data.tasks.data
                     this.totalPages = res.data.totalPages;
@@ -112,11 +115,16 @@ export default {
                         })
                 }
             });
-        }, onPageChanged(page) {
-            this.currentPage = page;
-
-            this.fetchData()
         },
+        onPageChanged(page) {
+            this.currentPage = page;
+            this.fetchData();
+        },
+        onSearch(searchKeyword) {
+            this.searchKeyword = searchKeyword;
+            this.currentPage = 1;
+            this.fetchData();
+        }
     },
 }
 </script>

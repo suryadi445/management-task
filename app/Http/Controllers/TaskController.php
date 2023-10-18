@@ -7,21 +7,27 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $currentPage = $request->query('page', 1);
         $pageSize = $request->query('pageSize');
+        $searchKeyword = $request->query('search');
 
-        $totalData = Task::count();
+        $query = Task::query();
+        if ($searchKeyword) {
+            $query->where('task', 'like', '%' . $searchKeyword . '%')
+                ->orWhere('project', 'like', '%' . $searchKeyword . '%')
+                ->orWhere('programmer', 'like', '%' . $searchKeyword . '%')
+                ->orWhere('status', 'like', '%' . $searchKeyword . '%');
+        }
+        $tasks = $query->paginate($pageSize, ['*'], 'page', $currentPage);
+
+        $totalData = $query->count();
         $totalPages = ceil($totalData / $pageSize);
 
-        $data = Task::paginate($pageSize, ['*'], 'page', $currentPage);
-
         return response()->json([
-            'tasks' => $data,
+            'tasks' => $tasks,
             'totalPages' => $totalPages
         ], 200);
     }

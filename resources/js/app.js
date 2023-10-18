@@ -6,18 +6,18 @@ import "vue-toastification/dist/index.css";
 import { LoadingPlugin } from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import axios from 'axios';
-
-
-
+import Swal from "sweetalert2";
 
 const app = createApp({});
 
-import PaginationComponent from './components/PaginationComponent.vue';
 import NavbarComponent from './components/NavbarComponent.vue';
+import SearchComponent from './components/searchComponent.vue';
+import PaginationComponent from './components/PaginationComponent.vue';
 import FooterComponent from './components/FooterComponent.vue';
 
-app.component('pagination-component', PaginationComponent);
 app.component('navbar-component', NavbarComponent);
+app.component('search-component', SearchComponent);
+app.component('pagination-component', PaginationComponent);
 app.component('footer-component', FooterComponent);
 
 const options = {
@@ -36,7 +36,8 @@ const options = {
     transition: "Vue-Toastification__slideBlurred",
 };
 
-app.config.globalProperties.axios = axios; // Menetapkan axios sebagai properti global
+window.Swal = Swal;
+app.config.globalProperties.axios = axios;
 app.use(LoadingPlugin);
 app.use(Toast, options);
 app.use(router);

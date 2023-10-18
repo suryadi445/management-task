@@ -66,7 +66,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import { useToast } from "vue-toastification";
 
 export default {
