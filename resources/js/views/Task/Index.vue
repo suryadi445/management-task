@@ -1,7 +1,7 @@
 <template>
     <div class="flex items-center justify-between px-1 mb-4">
         <h3 class="text-lg font-bold">List Task</h3>
-        <router-link to="task" class="px-3 py-1 text-white bg-blue-600 rounded-md">
+        <router-link to="task/add" class="px-3 py-1 text-white bg-blue-600 rounded-md">
             <i class="fa-solid fa-circle-plus"></i>
             Add Task
         </router-link>
@@ -45,6 +45,10 @@
                                 </button>
                             </div>
                         </td>
+                    </tr>
+
+                    <tr v-if="items.length == 0">
+                        <td colspan="100%" class="p-2 text-red-500">Data Tidak tersedia</td>
                     </tr>
                 </tbody>
             </table>

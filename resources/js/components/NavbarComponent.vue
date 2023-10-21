@@ -5,8 +5,15 @@
                 <div class="flex items-center justify-between">
                     <router-link to="/" class="text-2xl font-semibold text-white">Nama Situs</router-link>
                     <ul class="hidden space-x-4 lg:flex">
-                        <li><router-link to="/" class="text-white">Beranda</router-link></li>
-                        <li><router-link to="task" class="text-white">Task</router-link></li>
+                        <li>
+                            <router-link to="/" class="text-white">Beranda</router-link>
+                        </li>
+                        <li>
+                            <router-link to="/task" class="text-white">Task</router-link>
+                        </li>
+                        <li>
+                            <router-link to="/programmer" class="text-white">Programmer</router-link>
+                        </li>
                     </ul>
                     <div class="lg:hidden">
                         <button id="mobile-menu-button" class="p-2 text-white focus:outline-none">
