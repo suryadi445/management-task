@@ -7,6 +7,8 @@ import { LoadingPlugin } from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import axios from 'axios';
 import Swal from "sweetalert2";
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 
 const app = createApp({});
 
@@ -35,6 +37,30 @@ const options = {
     rtl: false,
     transition: "Vue-Toastification__slideBlurred",
 };
+
+const nprogressCSS = 'https://cdn.jsdelivr.net/npm/nprogress/nprogress.css';
+
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = nprogressCSS;
+document.head.appendChild(link);
+
+axios.interceptors.request.use((config) => {
+    NProgress.start();
+    return config;
+}, (error) => {
+    NProgress.done();
+    return Promise.reject(error);
+});
+
+axios.interceptors.response.use((response) => {
+    NProgress.done();
+    return response;
+}, (error) => {
+    NProgress.done();
+    return Promise.reject(error);
+});
 
 window.Swal = Swal;
 app.config.globalProperties.axios = axios;
