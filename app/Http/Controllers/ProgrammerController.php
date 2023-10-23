@@ -22,14 +22,15 @@ class ProgrammerController extends Controller
      */
     public function store(Request $request)
     {
-        // $request->validate([
-        //     'name' => 'required'
-        // ]);
+        $request->validate([
+            'nama' => 'required'
+        ]);
 
         $insert = Programmer::create([
             "nik" => $request->nik,
             "nama" => $request->nama,
             "tgl_lahir" => $request->tgl_lahir,
+            "provinsi_kelahiran" => $request->provinsi_kelahiran,
             "tempat_lahir" => $request->tempat_lahir,
             "no_hp" => $request->no_hp,
             "pendidikan_terakhir" => $request->pendidikan_terakhir,

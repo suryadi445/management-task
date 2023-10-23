@@ -19,6 +19,7 @@
                     <input type="text" v-model="formData.nama"
                         class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                         placeholder="Input Nama Here" />
+                    <span v-if="errors.nama" class="text-red-500">{{ errors.nama[0] }}</span>
                 </div>
             </div>
 
@@ -28,12 +29,24 @@
                     <input type="date" v-model="formData.tgl_lahir"
                         class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
                 </div>
-                <div>
-                    <label for="" class="font-bold text-gray-600">Tempat Lahir</label>
+                <div class="columns-2">
+                    <label for="" class="font-bold text-gray-600">Provinsi Kelahiran</label>
+                    <select v-model="formData.provinsi_kelahiran" @change="getKabupaten(formData.provinsi_kelahiran)"
+                        class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                        <option value="" selected disabled>Pilih Provinsi</option>
+                        <option :value="item.value" v-for="(item, index) in provinsi" :key="index">
+                            {{ item.label }}
+                        </option>
+                    </select>
+                    <label for="" class="font-bold text-gray-600">Kabupaten Kelahiran</label>
                     <select v-model="formData.tempat_lahir"
                         class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
-                        <option value="" selected disabled>Pilih Tempat Lahir</option>
+                        <option value="" selected disabled>Pilih Kabupaten</option>
+                        <option :value="item.value" v-for="(item, index) in kabupaten" :key="index">
+                            {{ item.label }}
+                        </option>
                     </select>
+
                 </div>
             </div>
 
@@ -116,7 +129,7 @@
             <div class="grid grid-cols-1 gap-4 mb-3 sm:grid-cols-2">
                 <div>
                     <label for="" class="font-bold text-gray-600">Tanggal Join</label>
-                    <input type="date" v-model="formData.tgl_join"
+                    <input type="date" v-model="formData.tgl_join" @change="changeKontrak(formData.tgl_join)"
                         class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
                 </div>
                 <div>
@@ -241,6 +254,7 @@ export default {
                 nik: '',
                 nama: '',
                 tgl_lahir: '',
+                provinsi_kelahiran: '',
                 tempat_lahir: '',
                 no_hp: '',
                 pendidikan_terakhir: '',
@@ -255,13 +269,56 @@ export default {
                 rekening: '',
                 keterangan: '',
             },
+            errors: {},
             formEdit: [],
             toast: useToast(),
             options: [],
-            lists: []
+            lists: [],
+            provinsi: [],
+            kabupaten: [],
         }
     },
+    mounted() {
+        this.getProvinsi()
+    },
     methods: {
+        getProvinsi() {
+            axios.get("https://dev.farizdotid.com/api/daerahindonesia/provinsi").then((response) => {
+                let data = response.data.provinsi;
+                if (Array.isArray(data)) {
+                    this.provinsi = data.map(item => {
+                        return {
+                            value: item.id,
+                            label: item.nama,
+                        };
+                    });
+                } else {
+                    console.error("Response data is not an array.");
+                }
+            }).catch((error) => {
+                console.error(error);
+            });
+        },
+        getKabupaten(idKab) {
+            let loader = this.$loading.show();
+
+            axios.get("https://dev.farizdotid.com/api/daerahindonesia/kota?id_provinsi=" + idKab).then((response) => {
+                let data = response.data.kota_kabupaten;
+                if (Array.isArray(data)) {
+                    this.kabupaten = data.map(item => {
+                        return {
+                            value: item.id,
+                            label: item.nama,
+                        };
+                    });
+                    loader.hide();
+                } else {
+                    console.error("Response data is not an array.");
+                }
+            }).catch((error) => {
+                console.error(error);
+            });
+        },
         closeModal() {
             this.isModalOpen = false
         },
@@ -355,15 +412,26 @@ export default {
                 this.toast.error(err);
             });
         },
+        changeKontrak(tgl_join) {
+            const joinedDate = new Date(tgl_join);
+            const selesaiKontrak = new Date(joinedDate);
+            selesaiKontrak.setFullYear(selesaiKontrak.getFullYear() + 1);
+            this.formData.selesai_kontrak = selesaiKontrak.toISOString().slice(0, 10);
+        },
         submitForm() {
             axios.post('/api/programmer/save', this.formData)
-                .then(res => {
-                    this.toast.success(res.data.message);
-                    this.$router.push('/programmer')
+                .then(response => {
+                    if (response.status === 200) {
+                        this.toast.success(response.data.message);
+                        this.$router.push('/');
+                    }
                 })
-                .catch(err => {
-                    console.error(err);
-                })
+                .catch(error => {
+                    if (error.response.status === 422) {
+                        this.errors = error.response.data.errors;
+                        this.toast.error(error.response.data.message);
+                    }
+                });
         }
 
     },
