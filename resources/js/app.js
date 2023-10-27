@@ -9,6 +9,9 @@ import axios from 'axios';
 import Swal from "sweetalert2";
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import VueGoodTablePlugin from 'vue-good-table-next';
+import 'vue-good-table-next/dist/vue-good-table-next.css' //import the styles
+
 
 const app = createApp({});
 
@@ -38,14 +41,6 @@ const options = {
     transition: "Vue-Toastification__slideBlurred",
 };
 
-const nprogressCSS = 'https://cdn.jsdelivr.net/npm/nprogress/nprogress.css';
-
-const link = document.createElement('link');
-link.rel = 'stylesheet';
-link.type = 'text/css';
-link.href = nprogressCSS;
-document.head.appendChild(link);
-
 axios.interceptors.request.use((config) => {
     NProgress.start();
     return config;
@@ -64,6 +59,7 @@ axios.interceptors.response.use((response) => {
 
 window.Swal = Swal;
 app.config.globalProperties.axios = axios;
+app.use(VueGoodTablePlugin);
 app.use(LoadingPlugin);
 app.use(Toast, options);
 app.use(router);

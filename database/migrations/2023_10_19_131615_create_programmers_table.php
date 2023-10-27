@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('tgl_lahir')->nullable();
             $table->string('provinsi_kelahiran')->nullable();
             $table->string('tempat_lahir')->nullable();
+            $table->string('namaProv')->nullable();
+            $table->string('namaKab')->nullable();
             $table->string('no_hp')->nullable();
             $table->string('pendidikan_terakhir')->nullable();
             $table->string('jenis_kelamin')->nullable();

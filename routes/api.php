@@ -34,6 +34,8 @@ Route::prefix('task')->group(function () {
 Route::prefix('programmer')->group(function () {
     Route::get('/', [ProgrammerController::class, 'index']);
     Route::post('/save', [ProgrammerController::class, 'store']);
+    Route::get('/edit/{id}', [ProgrammerController::class, 'show']);
+    Route::put('/update/{id}', [ProgrammerController::class, 'update']);
     Route::delete('/delete/{id}', [ProgrammerController::class, 'destroy']);
 });
 

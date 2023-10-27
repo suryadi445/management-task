@@ -1,6 +1,6 @@
 <template>
     <div class="flex items-center justify-between px-1 mb-4">
-        <h3 class="text-lg font-bold">Add Task</h3>
+        <h3 class="text-lg font-bold">Add Programmer</h3>
         <router-link to="/" class="px-3 py-1 text-white bg-yellow-400 rounded-md">
             <i class="fa-solid fa-rotate-left"></i>
         </router-link>
@@ -39,7 +39,7 @@
                         </option>
                     </select>
                     <label for="" class="font-bold text-gray-600">Kabupaten Kelahiran</label>
-                    <select v-model="formData.tempat_lahir"
+                    <select v-model="formData.tempat_lahir" @change="changeKab(formData.tempat_lahir)"
                         class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         <option value="" selected disabled>Pilih Kabupaten</option>
                         <option :value="item.value" v-for="(item, index) in kabupaten" :key="index">
@@ -47,7 +47,12 @@
                         </option>
                     </select>
 
+
                 </div>
+                <input type="hidden" v-model="formData.namaProv"
+                    class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
+                <input type="hidden" v-model="formData.namaKab"
+                    class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
             </div>
 
             <div class="grid grid-cols-1 gap-4 mb-3 sm:grid-cols-2">
@@ -94,10 +99,10 @@
             <div class="grid grid-cols-1 gap-4 mb-3 sm:grid-cols-2">
                 <div>
                     <label for="" class="font-bold text-gray-600">Status</label>
-                    <select @click="getOption('status')" v-model="formData.status"
+                    <select v-model="formData.status"
                         class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         <option value="" selected disabled>Pilih Status Karyawan</option>
-                        <option v-for="option in options" :value="option.value" :key="option.id">{{ option.label }}</option>
+                        <option v-for="option in status" :value="option.value" :key="option.id">{{ option.label }}</option>
                     </select>
                     <div class="flex justify-end mt-1">
                         <small class="px-2 text-white bg-purple-600 rounded-full" @click="openModal('status')">
@@ -110,10 +115,11 @@
                 </div>
                 <div>
                     <label for="" class="font-bold text-gray-600">Jabatan</label>
-                    <select @click="getOption('jabatan')" v-model="formData.jabatan"
+                    <select v-model="formData.jabatan"
                         class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         <option value="" selected disabled>Pilih Jabatan</option>
-                        <option v-for="option in options" :value="option.value" :key="option.id">{{ option.label }}</option>
+                        <option v-for="option in jabatan" :value="option.value" :key="option.id">{{ option.label }}
+                        </option>
                     </select>
                     <div class="flex justify-end mt-1">
                         <small class="px-2 text-white bg-purple-600 rounded-full" @click="openModal('jabatan')">
@@ -142,10 +148,10 @@
             <div class="grid grid-cols-1 gap-4 mb-3 sm:grid-cols-2">
                 <div>
                     <label for="" class="font-bold text-gray-600">Keahlian</label>
-                    <select @click="getOption('keahlian')" v-model="formData.keahlian"
+                    <select v-model="formData.keahlian"
                         class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         <option value="" selected disabled>Pilih Keahlian</option>
-                        <option v-for="option in options" :value="option.value" :key="option.id">
+                        <option v-for="option in keahlian" :value="option.value" :key="option.id">
                             {{ option.label }}
                         </option>
                     </select>
@@ -255,6 +261,8 @@ export default {
                 nama: '',
                 tgl_lahir: '',
                 provinsi_kelahiran: '',
+                namaProv: '',
+                namaKab: '',
                 tempat_lahir: '',
                 no_hp: '',
                 pendidikan_terakhir: '',
@@ -271,8 +279,10 @@ export default {
             },
             errors: {},
             formEdit: [],
+            status: [],
+            jabatan: [],
+            keahlian: [],
             toast: useToast(),
-            options: [],
             lists: [],
             provinsi: [],
             kabupaten: [],
@@ -280,8 +290,50 @@ export default {
     },
     mounted() {
         this.getProvinsi()
+        this.getStatus()
+        this.getJabatan()
+        this.getKeahlian()
     },
     methods: {
+        getKeahlian() {
+            axios.get('/api/keahlian').then(res => {
+                this.keahlian = res.data.data.map(item => {
+                    return {
+                        id: item.id,
+                        value: item.name,
+                        label: item.name,
+                    };
+                });
+            }).catch(err => {
+                this.toast.error(err);
+            });
+        },
+        getStatus() {
+            axios.get('/api/status').then(res => {
+                this.status = res.data.data.map(item => {
+                    return {
+                        id: item.id,
+                        value: item.name,
+                        label: item.name,
+                    };
+                });
+            }).catch(err => {
+                this.toast.error(err);
+            });
+        },
+        getJabatan() {
+            axios.get('/api/jabatan').then(res => {
+                this.jabatan = res.data.data.map(item => {
+                    return {
+                        id: item.id,
+                        value: item.name,
+                        label: item.name,
+                    };
+                });
+            }).catch(err => {
+                this.toast.error(err);
+            });
+        },
         getProvinsi() {
             axios.get("https://dev.farizdotid.com/api/daerahindonesia/provinsi").then((response) => {
                 let data = response.data.provinsi;
@@ -302,6 +354,12 @@ export default {
         getKabupaten(idKab) {
             let loader = this.$loading.show();
 
+            const selectedProvinsi = this.provinsi.find(item => item.value === idKab);
+            if (selectedProvinsi) {
+                this.formData.namaProv = selectedProvinsi.label;
+                this.formData.namaKab = '';
+            }
+
             axios.get("https://dev.farizdotid.com/api/daerahindonesia/kota?id_provinsi=" + idKab).then((response) => {
                 let data = response.data.kota_kabupaten;
                 if (Array.isArray(data)) {
@@ -318,6 +376,12 @@ export default {
             }).catch((error) => {
                 console.error(error);
             });
+        },
+        changeKab(idKab) {
+            const selectedKabupaten = this.kabupaten.find(item => item.value === idKab);
+            if (selectedKabupaten) {
+                this.formData.namaKab = selectedKabupaten.label;
+            }
         },
         closeModal() {
             this.isModalOpen = false
@@ -343,6 +407,9 @@ export default {
                     if (res.status == 200) {
                         this.toast.success(res.data.message);
                         this.isModalOpen = false;
+                        this.getStatus()
+                        this.getJabatan()
+                        this.getKeahlian()
                     }
                 })
                 .catch(err => {
@@ -368,6 +435,9 @@ export default {
                             if (res.status == 200) {
                                 this.toast.success(res.data.message);
                                 this.isModalOpen = false;
+                                this.getStatus()
+                                this.getJabatan()
+                                this.getKeahlian()
                             }
                         })
                         .catch(err => {
@@ -384,7 +454,9 @@ export default {
                         this.formModal.name = '';
                         this.toast.success(res.data.message);
                         this.isModalOpen = false;
-                        this.getOption(this.title)
+                        this.getStatus()
+                        this.getJabatan()
+                        this.getKeahlian()
                     } else {
                         this.toast.error(res.data.message);
 
@@ -394,24 +466,6 @@ export default {
                     this.toast.error(err);
                 })
         },
-        getOption(param) {
-            this.options = [];
-            let loader = this.$loading.show();
-
-            axios.get('/api/' + param).then(res => {
-                loader.hide();
-
-                this.options = res.data.data.map(item => {
-                    return {
-                        id: item.id,
-                        value: item.name,
-                        label: item.name,
-                    };
-                });
-            }).catch(err => {
-                this.toast.error(err);
-            });
-        },
         changeKontrak(tgl_join) {
             const joinedDate = new Date(tgl_join);
             const selesaiKontrak = new Date(joinedDate);
@@ -419,14 +473,21 @@ export default {
             this.formData.selesai_kontrak = selesaiKontrak.toISOString().slice(0, 10);
         },
         submitForm() {
+
+            let loader = this.$loading.show();
+
             axios.post('/api/programmer/save', this.formData)
                 .then(response => {
                     if (response.status === 200) {
+                        loader.hide();
+
                         this.toast.success(response.data.message);
-                        this.$router.push('/');
+                        this.$router.push('/programmer');
                     }
                 })
                 .catch(error => {
+                    loader.hide();
+
                     if (error.response.status === 422) {
                         this.errors = error.response.data.errors;
                         this.toast.error(error.response.data.message);

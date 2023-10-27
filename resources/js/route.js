@@ -5,6 +5,7 @@ import AddTask from './views/Task/Add.vue';
 import EditTask from './views/Task/Edit.vue';
 import Programmer from './views/Programmer/Index.vue';
 import AddProgrammer from './views/Programmer/Add.vue';
+import EditProgrammer from './views/Programmer/Edit.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -13,6 +14,7 @@ const routes = [
     { path: '/task/show/:id', name: 'EditTask', component: EditTask },
     { path: '/programmer', name: 'Programmer', component: Programmer },
     { path: '/programmer/add', name: 'AddProgrammer', component: AddProgrammer },
+    { path: '/programmer/show/:id', name: 'EditProgrammer', component: EditProgrammer },
 ];
 
 const router = createRouter({
