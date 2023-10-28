@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
-use App\Http\Controllers\ProgrammerController;
+use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SkillController;
@@ -31,12 +31,12 @@ Route::prefix('task')->group(function () {
     Route::delete('{id}', [TaskController::class, 'destroy']);
 });
 
-Route::prefix('programmer')->group(function () {
-    Route::get('/', [ProgrammerController::class, 'index']);
-    Route::post('/save', [ProgrammerController::class, 'store']);
-    Route::get('/edit/{id}', [ProgrammerController::class, 'show']);
-    Route::put('/update/{id}', [ProgrammerController::class, 'update']);
-    Route::delete('/delete/{id}', [ProgrammerController::class, 'destroy']);
+Route::prefix('karyawan')->group(function () {
+    Route::get('/', [KaryawanController::class, 'index']);
+    Route::post('/save', [KaryawanController::class, 'store']);
+    Route::get('/edit/{id}', [KaryawanController::class, 'show']);
+    Route::put('/update/{id}', [KaryawanController::class, 'update']);
+    Route::delete('/delete/{id}', [KaryawanController::class, 'destroy']);
 });
 
 Route::prefix('jabatan')->group(function () {

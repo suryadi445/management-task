@@ -1,6 +1,6 @@
 <template>
     <div class="flex items-center justify-between px-1 mb-4">
-        <h3 class="text-lg font-bold">Edit Programmer</h3>
+        <h3 class="text-lg font-bold">Edit karyawan</h3>
         <router-link to="/" class="px-3 py-1 text-white bg-yellow-400 rounded-md">
             <i class="fa-solid fa-rotate-left"></i>
         </router-link>
@@ -298,10 +298,10 @@ export default {
         fetchData() {
             let loader = this.$loading.show();
             this.formData.id = this.$route.params.id
-            axios.get('/api/programmer/edit/' + this.formData.id)
+            axios.get('/api/karyawan/edit/' + this.formData.id)
                 .then(res => {
                     loader.hide();
-                    this.formData = res.data.programmer;
+                    this.formData = res.data.Karyawan;
 
                     this.getKabupaten(this.formData.provinsi_kelahiran)
                 })
@@ -491,13 +491,13 @@ export default {
         submitForm() {
             let loader = this.$loading.show();
 
-            axios.put('/api/programmer/update/' + this.formData.id, this.formData)
+            axios.put('/api/karyawan/update/' + this.formData.id, this.formData)
                 .then(response => {
                     if (response.status === 200) {
                         loader.hide();
 
                         this.toast.success(response.data.message);
-                        this.$router.push('/programmer');
+                        this.$router.push('/karyawan');
                     }
                 })
                 .catch(error => {

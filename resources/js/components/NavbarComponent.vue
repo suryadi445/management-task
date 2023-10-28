@@ -12,7 +12,7 @@
                             <router-link to="/task" class="text-white">Task</router-link>
                         </li>
                         <li>
-                            <router-link to="/programmer" class="text-white">Programmer</router-link>
+                            <router-link to="/karyawan" class="text-white">Karyawan</router-link>
                         </li>
                     </ul>
                     <div class="lg:hidden">

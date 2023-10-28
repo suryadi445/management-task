@@ -1,6 +1,6 @@
 <template>
     <div class="flex items-center justify-between px-1 mb-4">
-        <h3 class="text-lg font-bold">Add Programmer</h3>
+        <h3 class="text-lg font-bold">Add karyawan</h3>
         <router-link to="/" class="px-3 py-1 text-white bg-yellow-400 rounded-md">
             <i class="fa-solid fa-rotate-left"></i>
         </router-link>
@@ -476,13 +476,13 @@ export default {
 
             let loader = this.$loading.show();
 
-            axios.post('/api/programmer/save', this.formData)
+            axios.post('/api/karyawan/save', this.formData)
                 .then(response => {
                     if (response.status === 200) {
                         loader.hide();
 
                         this.toast.success(response.data.message);
-                        this.$router.push('/programmer');
+                        this.$router.push('/karyawan');
                     }
                 })
                 .catch(error => {

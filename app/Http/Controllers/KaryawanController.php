@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Programmer;
+use App\Models\Karyawan;
 use Illuminate\Http\Request;
 
-class ProgrammerController extends Controller
+class KaryawanController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $result = Programmer::orderByDesc('id')->get();
+        $result = Karyawan::orderByDesc('id')->get();
 
         return response()->json([
-            'programmer' => $result,
+            'Karyawan' => $result,
         ], 200);
     }
 
@@ -28,7 +28,7 @@ class ProgrammerController extends Controller
             'nama' => 'required'
         ]);
 
-        $insert = Programmer::create([
+        $insert = Karyawan::create([
             "nik" => $request->nik,
             "nama" => $request->nama,
             "tgl_lahir" => $request->tgl_lahir,
@@ -61,12 +61,12 @@ class ProgrammerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Programmer $programmer, $id)
+    public function show(Karyawan $Karyawan, $id)
     {
-        $programmer = Programmer::find($id);
+        $Karyawan = Karyawan::find($id);
 
         return response()->json([
-            'programmer' => $programmer,
+            'Karyawan' => $Karyawan,
         ], 200);
     }
 
@@ -79,7 +79,7 @@ class ProgrammerController extends Controller
             'nama' => 'required'
         ]);
 
-        $insert = Programmer::where('id', $id)
+        $insert = Karyawan::where('id', $id)
             ->update([
                 "nik" => $request->nik,
                 "nama" => $request->nama,
@@ -115,14 +115,14 @@ class ProgrammerController extends Controller
      */
     public function destroy($id)
     {
-        $Programmer = Programmer::find($id);
+        $Karyawan = Karyawan::find($id);
 
-        if (!$Programmer) {
-            return response()->json(['message' => 'Programmer not found'], 404);
+        if (!$Karyawan) {
+            return response()->json(['message' => 'Karyawan not found'], 404);
         }
 
-        $Programmer->delete();
+        $Karyawan->delete();
 
-        return response()->json(['message' => 'Programmer deleted successfully'], 200);
+        return response()->json(['message' => 'Karyawan deleted successfully'], 200);
     }
 }

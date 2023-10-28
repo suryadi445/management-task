@@ -1,13 +1,13 @@
 <template>
     <div class="flex justify-between px-1 mb-4">
-        <h3 class="font-bold">List Programmer</h3>
-        <router-link to="/programmer/add" class="px-2 text-white bg-blue-600 rounded-md">
+        <h3 class="font-bold">List karyawan</h3>
+        <router-link to="/karyawan/add" class="px-2 text-white bg-blue-600 rounded-md">
             <i class="fas fa-plus"></i>
-            Add Programmer
+            Add karyawan
         </router-link>
     </div>
 
-    <table-component :data="programmerData" :columns="columns" :edit="edit" :remove="remove">
+    <table-component :data="karyawanData" :columns="columns" :edit="edit" :remove="remove">
     </table-component>
 </template>
 
@@ -22,7 +22,7 @@ export default {
     data() {
         return {
             toast: useToast(),
-            programmerData: [],
+            karyawanData: [],
             columns: [
                 {
                     label: "NIK",
@@ -101,9 +101,9 @@ export default {
     methods: {
         fetchData() {
             let loader = this.$loading.show();
-            axios.get('api/programmer')
+            axios.get('api/karyawan')
                 .then(res => {
-                    this.programmerData = res.data.programmer
+                    this.karyawanData = res.data.Karyawan
                     loader.hide();
                 })
                 .catch(err => {
@@ -111,7 +111,7 @@ export default {
                 })
         },
         edit(id) {
-            this.$router.push('/programmer/show/' + id);
+            this.$router.push('/karyawan/show/' + id);
         },
         remove(id) {
             Swal.fire({
@@ -124,11 +124,11 @@ export default {
                 cancelButtonText: "No, keep it",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.delete('api/programmer/delete/' + id)
+                    axios.delete('api/karyawan/delete/' + id)
                         .then(res => {
                             if (res.status == 200) {
                                 this.toast.success(res.data.message);
-                                this.programmerData = this.programmerData.filter(programmer => programmer.id !== id);
+                                this.karyawanData = this.karyawanData.filter(karyawan => karyawan.id !== id);
                             }
                         })
                         .catch(err => {
