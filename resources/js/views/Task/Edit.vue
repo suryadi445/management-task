@@ -27,15 +27,15 @@
                 <span v-if="errors.project" class="text-red-500">{{ errors.project[0] }}</span>
             </div>
             <div class="mb-3">
-                <label for="" class="font-bold text-gray-600">Programmer</label>
-                <select v-model="formData.programmer"
+                <label for="" class="font-bold text-gray-600">Karyawan</label>
+                <select v-model="formData.karyawan"
                     class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Input Task Here">
-                    <option value="" disabled selected>Pilih Programmer</option>
+                    <option value="" disabled selected>Pilih Karyawan</option>
                     <option value="Suryadi">Suryadi</option>
                     <option value="Aas">Aas</option>
                 </select>
-                <span v-if="errors.programmer" class="text-red-500">{{ errors.programmer[0] }}</span>
+                <span v-if="errors.karyawan" class="text-red-500">{{ errors.karyawan[0] }}</span>
             </div>
             <div class="mb-3">
                 <label for="" class="font-bold text-gray-600">Deadline</label>
@@ -75,7 +75,7 @@ export default {
                 id: null,
                 task: '',
                 project: '',
-                programmer: '',
+                karyawan: '',
                 deadline: '',
                 status: '',
             },
@@ -94,7 +94,7 @@ export default {
                 .then(res => {
                     this.formData.task = res.data.task
                     this.formData.project = res.data.project
-                    this.formData.programmer = res.data.programmer
+                    this.formData.karyawan = res.data.karyawan
                     this.formData.deadline = res.data.deadline
                     this.formData.status = res.data.status
                 })
@@ -106,7 +106,7 @@ export default {
             axios.put('/api/task/update/' + this.formData.id, this.formData)
                 .then(res => {
                     this.toast.success(res.data.message)
-                    this.$router.push('/');
+                    this.$router.push('/task');
                 })
                 .catch(err => {
                     this.errors = err.response.data.errors;

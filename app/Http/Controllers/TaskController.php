@@ -8,27 +8,12 @@ use Illuminate\Http\Request;
 class TaskController extends Controller
 {
 
-    public function index(Request $request)
+    public function index()
     {
-        $currentPage = $request->query('page', 1);
-        $pageSize = $request->query('pageSize');
-        $searchKeyword = $request->query('search');
-
-        $query = Task::query();
-        if ($searchKeyword) {
-            $query->where('task', 'like', '%' . $searchKeyword . '%')
-                ->orWhere('project', 'like', '%' . $searchKeyword . '%')
-                ->orWhere('programmer', 'like', '%' . $searchKeyword . '%')
-                ->orWhere('status', 'like', '%' . $searchKeyword . '%');
-        }
-        $tasks = $query->paginate($pageSize, ['*'], 'page', $currentPage);
-
-        $totalData = $query->count();
-        $totalPages = ceil($totalData / $pageSize);
+        $tasks = Task::latest()->get();
 
         return response()->json([
             'tasks' => $tasks,
-            'totalPages' => $totalPages
         ], 200);
     }
 
@@ -38,9 +23,11 @@ class TaskController extends Controller
     public function store(Request $request)
     {
 
+        // dd($request->all());
+
         $request->validate([
             'task' => 'required',
-            'programmer' => 'required',
+            'karyawan' => 'required',
             'deadline' => 'required',
             'project' => 'required',
             'status' => 'required',
@@ -49,7 +36,7 @@ class TaskController extends Controller
         Task::create([
             'task' => $request->task,
             'project' => $request->project,
-            'programmer' => $request->programmer,
+            'karyawan' => $request->karyawan,
             'deadline' => $request->deadline,
             'status' => $request->status,
         ]);
@@ -74,7 +61,7 @@ class TaskController extends Controller
     {
         $request->validate([
             'task' => 'required',
-            'programmer' => 'required',
+            'karyawan' => 'required',
             'deadline' => 'required',
             'project' => 'required',
             'status' => 'required',
@@ -84,7 +71,7 @@ class TaskController extends Controller
             ->update([
                 'task' => $request->task,
                 'project' => $request->project,
-                'programmer' => $request->programmer,
+                'karyawan' => $request->karyawan,
                 'deadline' => $request->deadline,
                 'status' => $request->status,
             ]);

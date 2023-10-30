@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('task')->nullable();
             $table->string('project')->nullable();
-            $table->string('programmer')->nullable();
+            $table->string('karyawan')->nullable();
             $table->date('deadline')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();

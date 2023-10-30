@@ -6,70 +6,51 @@
             Add Task
         </router-link>
     </div>
-    <div class="flex items-center justify-end px-1 mb-4">
-        <search-component @search="onSearch" />
-    </div>
     <div class="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
-        <div class="w-full overflow-x-auto">
-            <table class="w-full text-center">
-                <thead class="py-5 bg-gray-200">
-                    <tr>
-                        <th>Nama Task</th>
-                        <th>Project</th>
-                        <th>Programmer</th>
-                        <th>Deadline</th>
-                        <th>Tanggal Dibuat</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr class="px-2" v-for="(item, index) in items" :key="index">
-                        <td>{{ item.task }}</td>
-                        <td>{{ item.project }}</td>
-                        <td>{{ item.programmer }}</td>
-                        <td>{{ formatDateTime(item.deadline) }}</td>
-                        <td>{{ formatDateTime(item.created_at) }}</td>
-                        <td>{{ item.status }}</td>
-                        <td>
-                            <div class="flex justify-center">
-                                <router-link :to="'task/show/' + item.id"
-                                    class="px-2 py-1 mr-2 text-yellow-400 hover:text-yellow-500 hover:rounded-md hover:px-1 hover:text-xl"
-                                    title="edit">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                </router-link>
-                                <button @click="deleteTask(item.id)"
-                                    class="px-2 py-1 ml-2 text-red-400 hover:rounded-md hover:px-1 hover:text-red-700 hover:text-xl"
-                                    title="delete">
-                                    <i class="fas fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr v-if="items.length == 0">
-                        <td colspan="100%" class="p-2 text-red-500">Data Tidak tersedia</td>
-                    </tr>
-                </tbody>
-            </table>
-            <pagination-component :current-page="currentPage" :total-pages="totalPages" @page-changed="onPageChanged" />
-        </div>
+        <table-component :data="items" :columns="columns" :edit="edit" :remove="remove">
+        </table-component>
     </div>
 </template>
 
 <script>
 import { useToast } from "vue-toastification";
+import TableComponent from "../../components/TableComponent.vue";
+
 
 export default {
+    components: {
+        TableComponent
+    },
     data() {
         return {
             items: [],
             toast: useToast(),
-            currentPage: 1,
-            totalPages: 1,
-            pageSize: 5,
-            fullPage: false,
-            searchKeyword: "",
+            columns: [
+                {
+                    label: "Task",
+                    field: "task",
+                },
+                {
+                    label: "Project",
+                    field: "project",
+                },
+                {
+                    label: "Karyawan",
+                    field: "karyawan",
+                },
+                {
+                    label: "Deadline",
+                    field: "deadline",
+                },
+                {
+                    label: "Status",
+                    field: "status",
+                },
+                {
+                    label: 'Actions',
+                    field: 'actions'
+                },
+            ],
         }
     },
     mounted() {
@@ -79,24 +60,24 @@ export default {
         fetchData() {
             let loader = this.$loading.show();
 
-            axios.get(`api/task?page=${this.currentPage}&pageSize=${this.pageSize}&search=${this.searchKeyword}`)
+            axios.get(`api/task`)
                 .then(res => {
-                    this.items = res.data.tasks.data
-                    this.totalPages = res.data.totalPages;
+                    this.items = res.data.tasks
                     loader.hide()
                 })
                 .catch(err => {
-                    setTimeout(() => {
-                        loader.hide()
-                        this.toast.error(err.response.data.message);
-                    }, 2000);
+                    loader.hide()
+                    this.toast.error(err.response.data.message);
                 })
         },
         formatDateTime(dateTime) {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Date(dateTime).toLocaleDateString('id-ID', options);
         },
-        deleteTask(id) {
+        edit(id) {
+            this.$router.push('/task/show/' + id);
+        },
+        remove(id) {
             Swal.fire({
                 title: "Are you sure?",
                 text: "Once deleted, you will not be able to recover this task!",
@@ -120,15 +101,6 @@ export default {
                 }
             });
         },
-        onPageChanged(page) {
-            this.currentPage = page;
-            this.fetchData();
-        },
-        onSearch(searchKeyword) {
-            this.searchKeyword = searchKeyword;
-            this.currentPage = 1;
-            this.fetchData();
-        }
     },
 }
 </script>

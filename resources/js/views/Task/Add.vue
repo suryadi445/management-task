@@ -27,15 +27,15 @@
                 <span v-if="errors.project" class="text-red-500">{{ errors.project[0] }}</span>
             </div>
             <div class="mb-3">
-                <label for="" class="font-bold text-gray-600">Programmer</label>
-                <select v-model="formData.programmer"
+                <label for="" class="font-bold text-gray-600">Karyawan</label>
+                <select v-model="formData.karyawan"
                     class="w-full px-2 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Input Task Here">
-                    <option value="" disabled selected>Pilih Programmer</option>
+                    <option value="" disabled selected>Pilih Karyawan</option>
                     <option value="Suryadi">Suryadi</option>
                     <option value="Aas">Aas</option>
                 </select>
-                <span v-if="errors.programmer" class="text-red-500">{{ errors.programmer[0] }}</span>
+                <span v-if="errors.karyawan" class="text-red-500">{{ errors.karyawan[0] }}</span>
             </div>
             <div class="mb-3">
                 <label for="" class="font-bold text-gray-600">Deadline</label>
@@ -74,7 +74,7 @@ export default {
             formData: {
                 task: '',
                 project: '',
-                programmer: '',
+                karyawan: '',
                 deadline: '',
                 status: '',
             },
@@ -93,7 +93,7 @@ export default {
                     console.log(response);
                     if (response.status === 200) {
                         this.toast.success(response.data.message);
-                        this.$router.push('/');
+                        this.$router.push('/task');
                     }
                 })
                 .catch(error => {

@@ -3,7 +3,9 @@
         <nav class="px-10 py-4 bg-blue-500 shadow-md shadow-blue-500/50 ">
             <div class="container mx-auto">
                 <div class="flex items-center justify-between">
-                    <router-link to="/" class="text-2xl font-semibold text-white">Nama Situs</router-link>
+                    <router-link to="/" class="text-2xl font-semibold text-white">
+                        Management Task
+                    </router-link>
                     <ul class="hidden space-x-4 lg:flex">
                         <li>
                             <router-link to="/" class="text-white">Beranda</router-link>
