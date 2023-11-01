@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\StatusController;
@@ -29,6 +30,14 @@ Route::prefix('task')->group(function () {
     Route::post('/', [TaskController::class, 'store']);
     Route::put('update/{id}', [TaskController::class, 'update']);
     Route::delete('{id}', [TaskController::class, 'destroy']);
+});
+
+Route::prefix('project')->group(function () {
+    Route::get('/', [ProjectController::class, 'index']);
+    Route::get('edit/{id}', [ProjectController::class, 'show']);
+    Route::post('/save', [ProjectController::class, 'store']);
+    Route::put('update/{id}', [ProjectController::class, 'update']);
+    Route::delete('{id}', [ProjectController::class, 'destroy']);
 });
 
 Route::prefix('karyawan')->group(function () {

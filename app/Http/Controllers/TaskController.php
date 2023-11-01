@@ -22,9 +22,6 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-
-        // dd($request->all());
-
         $request->validate([
             'task' => 'required',
             'karyawan' => 'required',
