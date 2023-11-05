@@ -16,6 +16,9 @@
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </span>
+                <span v-if="props.column.field == 'images'">
+                    <img :src="props.row.path + props.row.image" style="width: 100px; height: auto;" />
+                </span>
                 <span v-else>
                     {{ props.formattedRow[props.column.field] }}
                 </span>

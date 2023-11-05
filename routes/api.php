@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\JabatanController;
@@ -30,6 +31,14 @@ Route::prefix('task')->group(function () {
     Route::post('/', [TaskController::class, 'store']);
     Route::put('update/{id}', [TaskController::class, 'update']);
     Route::delete('{id}', [TaskController::class, 'destroy']);
+});
+
+Route::prefix('absensi')->group(function () {
+    Route::get('/', [AbsensiController::class, 'index']);
+    // Route::get('edit/{id}', [AbsensiController::class, 'show']);
+    Route::post('/save', [AbsensiController::class, 'store']);
+    // Route::put('update/{id}', [AbsensiController::class, 'update']);
+    // Route::delete('{id}', [AbsensiController::class, 'destroy']);
 });
 
 Route::prefix('project')->group(function () {
