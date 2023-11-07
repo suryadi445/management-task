@@ -43,8 +43,26 @@
         </div>
 
         <div class="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
-            <table-component :data="items" :columns="columns">
-            </table-component>
+            <table-component :data="items" :columns="columns" @click="positionClick"></table-component>
+
+        </div>
+
+        <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+            <div
+                class="flex flex-col items-center w-full max-w-screen-lg p-4 mx-4 bg-white rounded-3xl modal-content sm:mx-8 md:mx-auto ">
+                <div style="height: 400px" class="w-full" ref="map">
+                    <l-map ref="map" :use-global-leaflet="false" v-model:zoom="zoom" :center="center">
+                        <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" layer-type="base"
+                            name="OpenStreetMap"></l-tile-layer>
+                        <l-marker :lat-lng="marker"></l-marker>
+                    </l-map>
+                </div>
+                <button @click="closeModal"
+                    class="px-4 py-2 mx-4 mt-4 text-sm text-gray-500 bg-gray-100 rounded-full sm:mx-8 hover:text-red-600 hover:bg-red-100"
+                    title="Close">
+                    X
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -53,13 +71,26 @@
 import moment from 'moment-timezone';
 import TableComponent from "../../components/TableComponent.vue";
 import { useToast } from "vue-toastification";
+import "leaflet/dist/leaflet.css";
+import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
+import 'leaflet/dist/leaflet.css';
+
 
 export default {
     components: {
-        TableComponent
+        TableComponent,
+        LMap,
+        LTileLayer,
+        LMarker,
     },
     data() {
         return {
+            map: null,
+            zoom: 16,
+            center: null,
+            marker: null,
+
+            showModal: false,
             mediaStream: null,
             currentDate: '',
             currentDay: '',
@@ -78,18 +109,22 @@ export default {
                 {
                     label: 'Image',
                     field: 'images',
+                    sortable: false,
                 },
                 {
                     label: "Nama Karyawan",
                     field: "nama_karyawan",
+                    sortable: false,
                 },
                 {
                     label: "Jabatan",
                     field: "jabatan",
+                    sortable: false,
                 },
                 {
                     label: "Tanggal Absensi",
                     field: "tanggal",
+                    firstSortType: 'desc'
                 },
                 {
                     label: "Jam Absensi",
@@ -97,12 +132,44 @@ export default {
                 },
                 {
                     label: "Position",
-                    field: "position",
+                    field: 'position',
+                    sortable: false,
                 },
             ],
         };
     },
     methods: {
+        positionClick(event) {
+
+            if (event.target.tagName === 'SPAN') {
+                const coordinates = event.target.innerText.split(',').map(coord => coord.trim());
+                const latitude = coordinates[0];
+                const longitude = coordinates[1];
+
+                this.marker = [latitude, longitude];
+                this.center = [latitude, longitude];
+
+                if (latitude && longitude) {
+                    const regex = /^[-0-9.]+$/;
+                    if (regex.test(latitude)) {
+                        this.showModal = true;
+                    }
+                }
+            }
+        },
+        openModal() {
+            this.showModal = true;
+            this.initializeMap();
+        },
+        closeModal() {
+            this.showModal = false;
+        },
+        initializeMap() {
+            this.map = L.map(this.$refs.map).setView(this.center, this.zoom);
+
+            const googleLayer = new L.Google();
+            this.map.addLayer(googleLayer);
+        },
         async capture() {
             const video = this.$refs.video;
             const canvas = this.$refs.canvas;
@@ -197,6 +264,18 @@ export default {
         setInterval(() => {
             this.updateClock();
         }, 1000);
+
     }
 }
 </script>
+
+<style>
+.vgt-table tbody td:nth-of-type(6) {
+    color: rgba(0, 0, 255, 0.607) !important;
+    text-decoration: underline;
+}
+
+.vgt-table tbody td:nth-of-type(6):hover {
+    cursor: pointer;
+}
+</style>
