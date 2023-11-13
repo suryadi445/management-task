@@ -25,9 +25,15 @@
                     <p>{{ currentTime }}</p>
                 </div>
                 <div class="mt-3">
-                    <button @click="capture" class="px-3 text-white bg-yellow-400 rounded-md ">
+                    <button @click="capture('masuk')" class="px-3 text-white bg-green-700 rounded-md ">
                         <i class="fa-solid fa-camera"></i>
-                        Capture
+                        Absensi Masuk
+                    </button>
+                    <br>
+                    <br>
+                    <button @click="capture('pulang')" class="px-3 text-white bg-blue-900 rounded-md ">
+                        <i class="fa-solid fa-camera"></i>
+                        Absensi Pulang
                     </button>
                 </div>
             </div>
@@ -57,11 +63,24 @@
                         <l-marker :lat-lng="marker"></l-marker>
                     </l-map>
                 </div>
-                <button @click="closeModal"
-                    class="px-4 py-2 mx-4 mt-4 text-sm text-gray-500 bg-gray-100 rounded-full sm:mx-8 hover:text-red-600 hover:bg-red-100"
+                <button @click="closeModal" v-if="this.closeModalText == 'X'"
+                    class="px-4 py-2 mx-4 mt-4 text-sm text-gray-500 bg-gray-100 rounded-full sm:mx-8 hover:text-green-600 hover:bg-red-100"
                     title="Close">
                     X
                 </button>
+
+                <div v-if="this.closeModalText == 'Lanjutkan Absensi'">
+                    <button @click="closeModal"
+                        class="px-4 py-2 mx-4 mt-4 text-sm text-gray-100 bg-green-700 rounded-full sm:mx-8 hover:text-green-600 hover:bg-green-100"
+                        title="Close">
+                        {{ closeModalText }}
+                    </button>
+                    <button @click="closeModalReload"
+                        class="px-4 py-2 mx-4 mt-4 text-sm text-gray-100 bg-red-600 rounded-full sm:mx-8 hover:text-red-600 hover:bg-red-100"
+                        title="Close">
+                        Perbaiki Maps
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -90,6 +109,7 @@ export default {
             center: null,
             marker: null,
 
+            closeModalText: 'X',
             showModal: false,
             mediaStream: null,
             currentDate: '',
@@ -103,6 +123,7 @@ export default {
                 'image': '',
                 'latitude': '',
                 'longitude': '',
+                'keterangan': '',
             },
             items: [],
             columns: [
@@ -129,6 +150,10 @@ export default {
                 {
                     label: "Jam Absensi",
                     field: "jam",
+                },
+                {
+                    label: "Jam Pulang",
+                    field: "jam_pulang",
                 },
                 {
                     label: "Position",
@@ -164,13 +189,18 @@ export default {
         closeModal() {
             this.showModal = false;
         },
+        closeModalReload() {
+            this.showModal = false;
+            this.stopMedia();
+            this.getLocation();
+        },
         initializeMap() {
             this.map = L.map(this.$refs.map).setView(this.center, this.zoom);
 
             const googleLayer = new L.Google();
             this.map.addLayer(googleLayer);
         },
-        async capture() {
+        async capture(keterangan) {
             const video = this.$refs.video;
             const canvas = this.$refs.canvas;
             const context = canvas.getContext('2d');
@@ -179,14 +209,16 @@ export default {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             const image = canvas.toDataURL('image/jpeg');
 
-            this.postImage(image);
+
+            this.postImage(image, keterangan);
 
         },
-        async postImage(image) {
+        async postImage(image, keterangan) {
 
             this.formData.image = image;
             this.formData.latitude = this.latitude;
             this.formData.longitude = this.longitude;
+            this.formData.keterangan = keterangan;
 
             try {
                 let response = await axios.post("/api/absensi/save", this.formData);
@@ -206,6 +238,17 @@ export default {
             this.$refs.video.srcObject = null;
         },
         async openCamera() {
+
+            console.log(this.latitude)
+            let latitude = this.latitude;
+            let longitude = this.longitude;
+
+            this.marker = [latitude, longitude];
+            this.center = [latitude, longitude];
+
+            this.showModal = true;
+            this.closeModalText = 'Lanjutkan Absensi';
+
             try {
                 const constraints = {
                     video: {
@@ -221,7 +264,12 @@ export default {
         },
         getLocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(this.showPosition);
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 1000,
+                    maximumAge: 0
+                };
+                navigator.geolocation.getCurrentPosition(this.showPosition, this.showErrorGps, options);
             } else {
                 alert("Geolocation is not supported by this browser.");
             }
@@ -232,6 +280,22 @@ export default {
 
             this.latitude = latitude;
             this.longitude = longitude;
+        },
+        showErrorGps(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
         },
         updateClock() {
             moment.locale('id');
@@ -270,12 +334,12 @@ export default {
 </script>
 
 <style>
-.vgt-table tbody td:nth-of-type(6) {
+.vgt-table tbody td:nth-of-type(7) {
     color: rgba(0, 0, 255, 0.607) !important;
     text-decoration: underline;
 }
 
-.vgt-table tbody td:nth-of-type(6):hover {
+.vgt-table tbody td:nth-of-type(7):hover {
     cursor: pointer;
 }
 </style>

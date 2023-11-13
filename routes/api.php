@@ -35,10 +35,7 @@ Route::prefix('task')->group(function () {
 
 Route::prefix('absensi')->group(function () {
     Route::get('/', [AbsensiController::class, 'index']);
-    // Route::get('edit/{id}', [AbsensiController::class, 'show']);
     Route::post('/save', [AbsensiController::class, 'store']);
-    // Route::put('update/{id}', [AbsensiController::class, 'update']);
-    // Route::delete('{id}', [AbsensiController::class, 'destroy']);
 });
 
 Route::prefix('project')->group(function () {

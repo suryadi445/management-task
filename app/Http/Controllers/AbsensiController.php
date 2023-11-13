@@ -56,19 +56,44 @@ class AbsensiController extends Controller
         file_put_contents($path, $imageData);
 
 
-        $insert = Absensi::create([
-            'image' => $imageName,
-            'path' => '/image/absensi/',
+        $cekAbsensi = Absensi::where([
             'user' => 3,
             'tanggal' => date('Y-m-d'),
-            'jam' => date('H:i:s'),
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-        ]);
+        ])->first();
+
+        if ($cekAbsensi) {
+
+            $keterangan = $request->keterangan;
+
+            if ($keterangan == 'pulang') {
+                $cekAbsensi->update([
+                    'image' => $imageName,
+                    'path' => '/image/absensi/',
+                    'jam_pulang' => date('H:i:s'),
+                ]);
+            } else {
+                $cekAbsensi->update([
+                    'image' => $imageName,
+                    'path' => '/image/absensi/',
+                    'latitude' => $request->latitude,
+                    'longitude' => $request->longitude,
+                ]);
+            }
+        } else {
+            Absensi::create([
+                'user' => 3,
+                'tanggal' => date('Y-m-d'),
+                'image' => $imageName,
+                'path' => '/image/absensi/',
+                'jam' => date('H:i:s'),
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+            ]);
+        }
 
 
         return response()->json([
-            "id" => $insert->id,
+            "id" => date('Y-m-d H:i:s'),
             "message" => 'Data berhasil disimpan',
         ], 200);
     }

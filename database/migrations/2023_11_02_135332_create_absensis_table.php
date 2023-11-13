@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('user');
             $table->date('tanggal');
             $table->time('jam');
+            $table->time('jam_pulang')->nullable();
             $table->string('latitude');
             $table->string('longitude');
             $table->timestamps();
