@@ -211,8 +211,6 @@ export default {
                 }
 
 
-                this.center = [response.data.data.latitude, response.data.data.longitude]
-                this.marker = [response.data.data.latitude, response.data.data.longitude]
             } catch (error) {
                 loader.hide();
             }

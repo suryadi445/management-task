@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Absensi;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
@@ -21,9 +22,11 @@ class AbsensiController extends Controller
             ->select('absensis.*', 'karyawans.nama as nama_karyawan', 'karyawans.jabatan')
             ->get();
 
+        $setting = Setting::first();
 
         return response()->json([
             "data" => $data,
+            "setting" => $setting,
             "message" => 'success',
         ], 200);
     }

@@ -160,7 +160,12 @@ export default {
                     field: 'position',
                     sortable: false,
                 },
+                {
+                    label: "Keterangan",
+                    field: 'keterangan',
+                },
             ],
+            setting: Object
         };
     },
     methods: {
@@ -239,7 +244,6 @@ export default {
         },
         async openCamera() {
 
-            console.log(this.latitude)
             let latitude = this.latitude;
             let longitude = this.longitude;
 
@@ -307,13 +311,27 @@ export default {
         formatTime(time) {
             return time < 10 ? `0${time}` : time;
         },
+        convertToMinutes(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            return hours * 60 + minutes;
+        },
         async fetchData() {
             try {
                 const response = await axios.get('/api/absensi')
 
                 this.items = response.data.data
+                this.setting = response.data.setting
+
+                let masuk_kerja = this.setting.jam_masuk_kerja;
+
 
                 this.items.forEach(item => {
+                    const totalMenitJamMasuk = this.convertToMinutes(masuk_kerja);
+                    const totalMenitJamAbsensi = this.convertToMinutes(item.jam);
+
+                    if (totalMenitJamAbsensi > totalMenitJamMasuk) {
+                        item.keterangan = 'Terlambat';
+                    }
                     item.position = `${item.latitude}, ${item.longitude}`;
                 });
             } catch (error) {
