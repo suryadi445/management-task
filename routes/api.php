@@ -7,6 +7,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SkillController;
 
@@ -36,6 +37,11 @@ Route::prefix('task')->group(function () {
 Route::prefix('absensi')->group(function () {
     Route::get('/', [AbsensiController::class, 'index']);
     Route::post('/save', [AbsensiController::class, 'store']);
+});
+
+Route::prefix('setting')->group(function () {
+    Route::get('/', [SettingController::class, 'index']);
+    Route::post('/save', [SettingController::class, 'store']);
 });
 
 Route::prefix('project')->group(function () {

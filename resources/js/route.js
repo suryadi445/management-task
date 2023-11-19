@@ -7,6 +7,7 @@ import Karyawan from './views/Karyawan/Index.vue';
 import AddKaryawan from './views/Karyawan/Add.vue';
 import EditKaryawan from './views/Karyawan/Edit.vue';
 import Absensi from './views/Absensi/Index.vue';
+import Setting from './views/Setting/Index.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -17,6 +18,7 @@ const routes = [
     { path: '/karyawan/add', name: 'AddKaryawan', component: AddKaryawan },
     { path: '/karyawan/show/:id', name: 'EditKaryawan', component: EditKaryawan },
     { path: '/absensi', name: 'Absensi', component: Absensi },
+    { path: '/setting', name: 'Setting', component: Setting },
 ];
 
 const router = createRouter({

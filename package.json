@@ -22,6 +22,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.4.2",
+        "@vueform/multiselect": "^2.6.6",
         "moment-timezone": "^0.5.43",
         "nprogress": "^0.2.0",
         "vue-good-table-next": "^0.2.1",

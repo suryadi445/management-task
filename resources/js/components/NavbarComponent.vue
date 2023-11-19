@@ -19,6 +19,9 @@
                         <li>
                             <router-link to="/absensi" class="text-white">Absensi</router-link>
                         </li>
+                        <li>
+                            <router-link to="/setting" class="text-white">Setting</router-link>
+                        </li>
                     </ul>
                     <div class="lg:hidden">
                         <button id="mobile-menu-button" class="p-2 text-white focus:outline-none">
