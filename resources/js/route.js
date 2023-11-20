@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from './views/Home/Index.vue';
+import Registrasi from './views/Home/Registrasi.vue';
 import Task from './views/Task/Index.vue';
 import AddTask from './views/Task/Add.vue';
 import EditTask from './views/Task/Edit.vue';
@@ -11,6 +12,7 @@ import Setting from './views/Setting/Index.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
+    { path: '/registrasi', name: 'Registrasi', component: Registrasi },
     { path: '/task', name: 'Task', component: Task },
     { path: '/task/add', name: 'AddTask', component: AddTask },
     { path: '/task/show/:id', name: 'EditTask', component: EditTask },
