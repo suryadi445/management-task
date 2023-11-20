@@ -23,65 +23,68 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::prefix('karyawan')->group(function () {
+        Route::get('/', [KaryawanController::class, 'index']);
+        Route::post('/save', [KaryawanController::class, 'store']);
+        Route::get('/edit/{id}', [KaryawanController::class, 'show']);
+        Route::put('/update/{id}', [KaryawanController::class, 'update']);
+        Route::delete('/delete/{id}', [KaryawanController::class, 'destroy']);
+    });
+
+    Route::prefix('task')->group(function () {
+        Route::get('/', [TaskController::class, 'index']);
+        Route::get('edit/{id}', [TaskController::class, 'show']);
+        Route::post('/', [TaskController::class, 'store']);
+        Route::put('update/{id}', [TaskController::class, 'update']);
+        Route::delete('{id}', [TaskController::class, 'destroy']);
+    });
+
+    Route::prefix('absensi')->group(function () {
+        Route::get('/', [AbsensiController::class, 'index']);
+        Route::post('/save', [AbsensiController::class, 'store']);
+    });
+
+    Route::prefix('setting')->group(function () {
+        Route::get('/', [SettingController::class, 'index']);
+        Route::post('/save', [SettingController::class, 'store']);
+    });
+
+    Route::prefix('project')->group(function () {
+        Route::get('/', [ProjectController::class, 'index']);
+        Route::get('edit/{id}', [ProjectController::class, 'show']);
+        Route::post('/save', [ProjectController::class, 'store']);
+        Route::put('update/{id}', [ProjectController::class, 'update']);
+        Route::delete('{id}', [ProjectController::class, 'destroy']);
+    });
+
+
+
+    Route::prefix('jabatan')->group(function () {
+        Route::get('/', [JabatanController::class, 'index']);
+        Route::post('/save', [JabatanController::class, 'store']);
+        Route::put('/update/{id}', [JabatanController::class, 'update']);
+        Route::delete('/delete/{id}', [JabatanController::class, 'destroy']);
+    });
+
+    Route::prefix('keahlian')->group(function () {
+        Route::get('/', [SkillController::class, 'index']);
+        Route::post('/save', [SkillController::class, 'store']);
+        Route::put('/update/{id}', [SkillController::class, 'update']);
+        Route::delete('/delete/{id}', [SkillController::class, 'destroy']);
+    });
+
+    Route::prefix('status')->group(function () {
+        Route::get('/', [StatusController::class, 'index']);
+        Route::post('/save', [StatusController::class, 'store']);
+        Route::put('/update/{id}', [StatusController::class, 'update']);
+        Route::delete('/delete/{id}', [StatusController::class, 'destroy']);
+    });
 });
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-
-
-Route::prefix('task')->group(function () {
-    Route::get('/', [TaskController::class, 'index']);
-    Route::get('edit/{id}', [TaskController::class, 'show']);
-    Route::post('/', [TaskController::class, 'store']);
-    Route::put('update/{id}', [TaskController::class, 'update']);
-    Route::delete('{id}', [TaskController::class, 'destroy']);
-});
-
-Route::prefix('absensi')->group(function () {
-    Route::get('/', [AbsensiController::class, 'index']);
-    Route::post('/save', [AbsensiController::class, 'store']);
-});
-
-Route::prefix('setting')->group(function () {
-    Route::get('/', [SettingController::class, 'index']);
-    Route::post('/save', [SettingController::class, 'store']);
-});
-
-Route::prefix('project')->group(function () {
-    Route::get('/', [ProjectController::class, 'index']);
-    Route::get('edit/{id}', [ProjectController::class, 'show']);
-    Route::post('/save', [ProjectController::class, 'store']);
-    Route::put('update/{id}', [ProjectController::class, 'update']);
-    Route::delete('{id}', [ProjectController::class, 'destroy']);
-});
-
-Route::prefix('karyawan')->group(function () {
-    Route::get('/', [KaryawanController::class, 'index']);
-    Route::post('/save', [KaryawanController::class, 'store']);
-    Route::get('/edit/{id}', [KaryawanController::class, 'show']);
-    Route::put('/update/{id}', [KaryawanController::class, 'update']);
-    Route::delete('/delete/{id}', [KaryawanController::class, 'destroy']);
-});
-
-Route::prefix('jabatan')->group(function () {
-    Route::get('/', [JabatanController::class, 'index']);
-    Route::post('/save', [JabatanController::class, 'store']);
-    Route::put('/update/{id}', [JabatanController::class, 'update']);
-    Route::delete('/delete/{id}', [JabatanController::class, 'destroy']);
-});
-
-Route::prefix('keahlian')->group(function () {
-    Route::get('/', [SkillController::class, 'index']);
-    Route::post('/save', [SkillController::class, 'store']);
-    Route::put('/update/{id}', [SkillController::class, 'update']);
-    Route::delete('/delete/{id}', [SkillController::class, 'destroy']);
-});
-
-Route::prefix('status')->group(function () {
-    Route::get('/', [StatusController::class, 'index']);
-    Route::post('/save', [StatusController::class, 'store']);
-    Route::put('/update/{id}', [StatusController::class, 'update']);
-    Route::delete('/delete/{id}', [StatusController::class, 'destroy']);
-});

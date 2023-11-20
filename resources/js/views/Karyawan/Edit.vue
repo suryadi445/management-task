@@ -285,6 +285,7 @@ export default {
             lists: [],
             provinsi: [],
             kabupaten: [],
+            token: localStorage.getItem('access_token'),
         }
     },
     mounted() {
@@ -298,21 +299,29 @@ export default {
         fetchData() {
             let loader = this.$loading.show();
             this.formData.id = this.$route.params.id
-            axios.get('/api/karyawan/edit/' + this.formData.id)
-                .then(res => {
-                    loader.hide();
-                    this.formData = res.data.Karyawan;
+            axios.get('/api/karyawan/edit/' + this.formData.id, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                loader.hide();
+                this.formData = res.data.Karyawan;
 
-                    this.getKabupaten(this.formData.provinsi_kelahiran)
-                })
-                .catch(err => {
-                    loader.hide();
-                    console.error(err);
-                })
+                this.getKabupaten(this.formData.provinsi_kelahiran)
+            }).catch(err => {
+                loader.hide();
+                console.error(err);
+            })
 
         },
         getKeahlian() {
-            axios.get('/api/keahlian').then(res => {
+            axios.get('/api/keahlian', {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
                 this.keahlian = res.data.data.map(item => {
                     return {
                         id: item.id,
@@ -325,7 +334,12 @@ export default {
             });
         },
         getStatus() {
-            axios.get('/api/status').then(res => {
+            axios.get('/api/status', {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
                 this.status = res.data.data.map(item => {
                     return {
                         id: item.id,
@@ -338,7 +352,12 @@ export default {
             });
         },
         getJabatan() {
-            axios.get('/api/jabatan').then(res => {
+            axios.get('/api/jabatan', {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
                 this.jabatan = res.data.data.map(item => {
                     return {
                         id: item.id,
@@ -407,30 +426,36 @@ export default {
             this.isModalOpen = true;
             this.modalTitle = param
 
-            axios.get('/api/' + param)
-                .then(res => {
-                    loader.hide();
-                    this.lists = res.data.data
-                })
-                .catch(err => {
-                    this.toast.error(err.response.data.message);
-                })
+            axios.get('/api/' + param, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                loader.hide();
+                this.lists = res.data.data
+            }).catch(err => {
+                this.toast.error(err.response.data.message);
+            })
         },
         updateList(id, name) {
             let param = this.modalTitle
-            axios.put('/api/' + param + '/update/' + id, { name })
-                .then(res => {
-                    if (res.status == 200) {
-                        this.toast.success(res.data.message);
-                        this.isModalOpen = false;
-                        this.getStatus()
-                        this.getJabatan()
-                        this.getKeahlian()
-                    }
-                })
-                .catch(err => {
-                    this.toast.error(err.response.data.message);
-                })
+            axios.put('/api/' + param + '/update/' + id, { name }, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                if (res.status == 200) {
+                    this.toast.success(res.data.message);
+                    this.isModalOpen = false;
+                    this.getStatus()
+                    this.getJabatan()
+                    this.getKeahlian()
+                }
+            }).catch(err => {
+                this.toast.error(err.response.data.message);
+            })
 
         },
         deleteList(id) {
@@ -446,16 +471,20 @@ export default {
             }).then((result) => {
                 if (result.isConfirmed) {
                     let param = this.modalTitle
-                    axios.delete('/api/' + param + '/delete/' + id)
-                        .then(res => {
-                            if (res.status == 200) {
-                                this.toast.success(res.data.message);
-                                this.isModalOpen = false;
-                                this.getJabatan()
-                                this.getStatus()
-                                this.getKeahlian()
-                            }
-                        })
+                    axios.delete('/api/' + param + '/delete/' + id, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }).then(res => {
+                        if (res.status == 200) {
+                            this.toast.success(res.data.message);
+                            this.isModalOpen = false;
+                            this.getJabatan()
+                            this.getStatus()
+                            this.getKeahlian()
+                        }
+                    })
                         .catch(err => {
                             this.toast.error(err.response.data.message);
                         })
@@ -464,20 +493,24 @@ export default {
         },
         addModal() {
             this.title = this.modalTitle;
-            axios.post('/api/' + this.title + '/save', this.formModal)
-                .then(res => {
-                    if (res.status == 200) {
-                        this.formModal.name = '';
-                        this.toast.success(res.data.message);
-                        this.isModalOpen = false;
-                        this.getStatus()
-                        this.getJabatan()
-                        this.getKeahlian()
-                    } else {
-                        this.toast.error(res.data.message);
+            axios.post('/api/' + this.title + '/save', this.formModal, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                if (res.status == 200) {
+                    this.formModal.name = '';
+                    this.toast.success(res.data.message);
+                    this.isModalOpen = false;
+                    this.getStatus()
+                    this.getJabatan()
+                    this.getKeahlian()
+                } else {
+                    this.toast.error(res.data.message);
 
-                    }
-                })
+                }
+            })
                 .catch(err => {
                     this.toast.error(err);
                 })
@@ -491,25 +524,27 @@ export default {
         submitForm() {
             let loader = this.$loading.show();
 
-            axios.put('/api/karyawan/update/' + this.formData.id, this.formData)
-                .then(response => {
-                    if (response.status === 200) {
-                        loader.hide();
-
-                        this.toast.success(response.data.message);
-                        this.$router.push('/karyawan');
-                    }
-                })
-                .catch(error => {
+            axios.put('/api/karyawan/update/' + this.formData.id, this.formData, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => {
+                if (response.status === 200) {
                     loader.hide();
 
-                    if (error.response.status === 422) {
-                        this.errors = error.response.data.errors;
-                        this.toast.error(error.response.data.message);
-                    }
-                });
-        }
+                    this.toast.success(response.data.message);
+                    this.$router.push('/karyawan');
+                }
+            }).catch(error => {
+                loader.hide();
 
+                if (error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                    this.toast.error(error.response.data.message);
+                }
+            });
+        }
     },
 }
 </script>

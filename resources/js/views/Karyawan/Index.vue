@@ -23,6 +23,7 @@ export default {
         return {
             toast: useToast(),
             karyawanData: [],
+            token: localStorage.getItem('access_token'),
             columns: [
                 {
                     label: "NIK",
@@ -101,14 +102,18 @@ export default {
     methods: {
         fetchData() {
             let loader = this.$loading.show();
-            axios.get('api/karyawan')
-                .then(res => {
-                    this.karyawanData = res.data.Karyawan
-                    loader.hide();
-                })
-                .catch(err => {
-                    this.toast.error(err.response.data.message);
-                })
+            axios.get('api/karyawan', {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                this.karyawanData = res.data.Karyawan
+                loader.hide();
+            }).catch(err => {
+                this.toast.error(err.response.data.message);
+            })
+
         },
         edit(id) {
             this.$router.push('/karyawan/show/' + id);
@@ -124,16 +129,19 @@ export default {
                 cancelButtonText: "No, keep it",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.delete('api/karyawan/delete/' + id)
-                        .then(res => {
-                            if (res.status == 200) {
-                                this.toast.success(res.data.message);
-                                this.karyawanData = this.karyawanData.filter(karyawan => karyawan.id !== id);
-                            }
-                        })
-                        .catch(err => {
-                            this.toast.error(err.response.data.message);
-                        })
+                    axios.delete('api/karyawan/delete/' + id, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }).then(res => {
+                        if (res.status == 200) {
+                            this.toast.success(res.data.message);
+                            this.karyawanData = this.karyawanData.filter(karyawan => karyawan.id !== id);
+                        }
+                    }).catch(err => {
+                        this.toast.error(err.response.data.message);
+                    })
                 }
             });
         },
