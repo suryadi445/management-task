@@ -150,6 +150,7 @@ export default {
             errors: {},
             lists: [],
             toast: useToast(),
+            token: localStorage.getItem('access_token'),
         }
     },
     mounted() {
@@ -159,7 +160,12 @@ export default {
     methods: {
         fetchModalData() {
             let loader = this.$loading.show();
-            axios.get('/api/project').then(res => {
+            axios.get('/api/project', {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
                 loader.hide();
                 this.lists = res.data.data
             }).catch(err => {
@@ -175,20 +181,28 @@ export default {
             this.isModalOpen = false
         },
         addModal() {
-            axios.post('/api/project/save', this.formModal)
-                .then(res => {
-                    this.toast.success(res.data.message);
-                    this.isModalOpen = false
-                    this.fetchModalData()
-                })
-                .catch(err => {
-                    this.toast.error(err.response.data.message);
-                })
+            axios.post('/api/project/save', this.formModal, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                this.toast.success(res.data.message);
+                this.isModalOpen = false
+                this.fetchModalData()
+            }).catch(err => {
+                this.toast.error(err.response.data.message);
+            })
         },
         updateList(id, nama_project) {
             this.formModal.nama_project = nama_project;
 
-            axios.put('/api/project/update/' + id, this.formModal).then(res => {
+            axios.put('/api/project/update/' + id, this.formModal, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
                 this.fetchModalData()
                 this.isModalOpen = false
                 this.toast.success(res.data.message);
@@ -207,7 +221,12 @@ export default {
                 cancelButtonText: "No, keep it",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.delete('/api/project/' + id).then(res => {
+                    axios.delete('/api/project/' + id, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }).then(res => {
                         if (res.status == 200) {
                             this.toast.success(res.data.message);
                             this.isModalOpen = false;
@@ -220,20 +239,23 @@ export default {
             });
         },
         submitAction() {
-            axios.post('/api/task', this.formData)
-                .then(response => {
-                    console.log(response);
-                    if (response.status === 200) {
-                        this.toast.success(response.data.message);
-                        this.$router.push('/task');
-                    }
-                })
-                .catch(error => {
-                    if (error.response.status === 422) {
-                        this.errors = error.response.data.errors;
-                        this.toast.error(error.response.data.message);
-                    }
-                });
+            axios.post('/api/task', this.formData, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => {
+                console.log(response);
+                if (response.status === 200) {
+                    this.toast.success(response.data.message);
+                    this.$router.push('/task');
+                }
+            }).catch(error => {
+                if (error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                    this.toast.error(error.response.data.message);
+                }
+            });
         },
         setDefaultDeadline() {
             const today = new Date();

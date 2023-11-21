@@ -51,6 +51,7 @@ export default {
                     field: 'actions'
                 },
             ],
+            token: localStorage.getItem('access_token'),
         }
     },
     mounted() {
@@ -60,15 +61,18 @@ export default {
         fetchData() {
             let loader = this.$loading.show();
 
-            axios.get(`api/task`)
-                .then(res => {
-                    this.items = res.data.tasks
-                    loader.hide()
-                })
-                .catch(err => {
-                    loader.hide()
-                    this.toast.error(err.response.data.message);
-                })
+            axios.get(`api/task`, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                this.items = res.data.tasks
+                loader.hide()
+            }).catch(err => {
+                loader.hide()
+                this.toast.error(err.response.data.message);
+            })
         },
         formatDateTime(dateTime) {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -88,16 +92,19 @@ export default {
                 cancelButtonText: "No, keep it",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.delete('api/task/' + id)
-                        .then(res => {
-                            if (res.status == 200) {
-                                this.toast.success(res.data.message);
-                                this.items = this.items.filter(item => item.id !== id);
-                            }
-                        })
-                        .catch(err => {
-                            this.toast.error(err.response.data.message);
-                        })
+                    axios.delete('api/task/' + id, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }).then(res => {
+                        if (res.status == 200) {
+                            this.toast.success(res.data.message);
+                            this.items = this.items.filter(item => item.id !== id);
+                        }
+                    }).catch(err => {
+                        this.toast.error(err.response.data.message);
+                    })
                 }
             });
         },

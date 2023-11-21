@@ -149,6 +149,7 @@ export default {
             errors: {},
             lists: [],
             toast: useToast(),
+            token: localStorage.getItem('access_token'),
         }
     },
     mounted() {
@@ -158,21 +159,29 @@ export default {
     methods: {
         fetchDataEdit() {
             this.formData.id = this.$route.params.id;
-            axios.get("/api/task/edit/" + this.formData.id)
-                .then(res => {
-                    this.formData.task = res.data.task
-                    this.formData.project = res.data.project
-                    this.formData.karyawan = res.data.karyawan
-                    this.formData.deadline = res.data.deadline
-                    this.formData.status = res.data.status
-                })
-                .catch(err => {
-                    console.error(err);
-                })
+            axios.get("/api/task/edit/" + this.formData.id, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                this.formData.task = res.data.task
+                this.formData.project = res.data.project
+                this.formData.karyawan = res.data.karyawan
+                this.formData.deadline = res.data.deadline
+                this.formData.status = res.data.status
+            }).catch(err => {
+                console.error(err);
+            })
         },
         fetchModalData() {
             let loader = this.$loading.show();
-            axios.get('/api/project').then(res => {
+            axios.get('/api/project', {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
                 loader.hide();
                 this.lists = res.data.data
             }).catch(err => {
@@ -188,20 +197,28 @@ export default {
             this.isModalOpen = false
         },
         addModal() {
-            axios.post('/api/project/save', this.formModal)
-                .then(res => {
-                    this.toast.success(res.data.message);
-                    this.isModalOpen = false
-                    this.fetchModalData()
-                })
-                .catch(err => {
-                    this.toast.error(err.response.data.message);
-                })
+            axios.post('/api/project/save', this.formModal, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                this.toast.success(res.data.message);
+                this.isModalOpen = false
+                this.fetchModalData()
+            }).catch(err => {
+                this.toast.error(err.response.data.message);
+            })
         },
         updateList(id, nama_project) {
             this.formModal.nama_project = nama_project;
 
-            axios.put('/api/project/update/' + id, this.formModal).then(res => {
+            axios.put('/api/project/update/' + id, this.formModal, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
                 this.fetchModalData()
                 this.isModalOpen = false
                 this.toast.success(res.data.message);
@@ -233,19 +250,19 @@ export default {
             });
         },
         submitAction() {
-            axios.put('/api/task/update/' + this.formData.id, this.formData)
-                .then(res => {
-                    this.toast.success(res.data.message)
-                    this.$router.push('/task');
-                })
-                .catch(err => {
-                    this.errors = err.response.data.errors;
-                    this.toast.error(err.response.data.message)
-                })
+            axios.put('/api/task/update/' + this.formData.id, this.formData, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(res => {
+                this.toast.success(res.data.message)
+                this.$router.push('/task');
+            }).catch(err => {
+                this.errors = err.response.data.errors;
+                this.toast.error(err.response.data.message)
+            })
         }
-
-
-
     }
 }
 </script>
