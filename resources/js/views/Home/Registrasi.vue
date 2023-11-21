@@ -83,13 +83,13 @@ export default {
                     password: this.password,
                 });
 
-                // Jika registrasi berhasil, Anda bisa menangani respons sesuai kebutuhan
-                console.log(response.data);
+                const token = response.data.token;
 
-                // Setelah registrasi berhasil, Anda mungkin ingin melakukan navigasi atau tindakan lainnya
+                localStorage.setItem('access_token', token);
+
+                this.$router.push('/karyawan');
+
             } catch (error) {
-                // Tangani kesalahan saat registrasi
-                console.error('Registration error:', error.response.data);
                 this.errors = error.response.data.errors;
             }
         },

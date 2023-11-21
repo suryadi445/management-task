@@ -17,7 +17,12 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $token = $request->user()->createToken('token-name')->plainTextToken;
 
-            return response()->json(['token' => $token]);
+            $name_user = $request->user()->name;
+
+            return response()->json([
+                'message' => 'Welcome back ' . $name_user,
+                'token' => $token
+            ], 200);
         }
 
         return response()->json(['message' => 'Unauthorized'], 401);
@@ -39,6 +44,8 @@ class AuthController extends Controller
 
         $token = $user->createToken('token-name')->plainTextToken;
 
-        return response()->json(['token' => $token], 201);
+        return response()->json([
+            'token' => $token
+        ], 201);
     }
 }

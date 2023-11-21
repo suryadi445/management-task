@@ -2,7 +2,11 @@
 /node_modules
 /public/build
 /public/hot
-/public/image
+# /public/image
+/public/image/absensi/*
+!/public/image/absensi/
+/public/image/setting/*
+!/public/image/setting/
 /public/storage
 /storage/*.key
 /vendor
