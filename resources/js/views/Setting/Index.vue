@@ -160,6 +160,7 @@ export default {
             },
             imageLogo: null,
             toast: useToast(),
+            token: localStorage.getItem('access_token'),
         }
     },
     methods: {
@@ -180,6 +181,7 @@ export default {
                 const response = await axios.post('/api/setting/save', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${this.token}`,
                     },
                 });
 
@@ -195,7 +197,12 @@ export default {
         async fetchData() {
             let loader = this.$loading.show();
             try {
-                const response = await axios.get('api/setting');
+                const response = await axios.get('api/setting', {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
                 const weekdaysFromAPI = response.data.data.weekdays;
                 this.formData = response.data.data;
 
