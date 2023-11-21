@@ -161,6 +161,7 @@ export default {
                     sortable: false,
                 },
             ],
+            token: localStorage.getItem('access_token'),
         };
     },
     methods: {
@@ -221,7 +222,12 @@ export default {
             this.formData.keterangan = keterangan;
 
             try {
-                let response = await axios.post("/api/absensi/save", this.formData);
+                let response = await axios.post("/api/absensi/save", this.formData, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
 
                 this.fetchData();
                 this.stopMedia();
@@ -309,7 +315,12 @@ export default {
         },
         async fetchData() {
             try {
-                const response = await axios.get('/api/absensi')
+                const response = await axios.get('/api/absensi', {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                })
 
                 this.items = response.data.data
 
